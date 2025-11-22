@@ -25,11 +25,6 @@ const initialForm = useMemo(() => {
   };
 }, [user, open]);
 
-// useEffect(() => {
-//   if (initialForm) setForm(initialForm);
-// }, [initialForm]);
-
-
   const { addUser, editUser } = useUserMutations();
 
   const onSubmit = async (e: React.FormEvent) => {

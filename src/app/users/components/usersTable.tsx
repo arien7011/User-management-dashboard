@@ -1,4 +1,3 @@
-// src/app/users/components/UsersTable.tsx
 "use client";
 import Link from "next/link";
 import type { User } from "@/types/user";

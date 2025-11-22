@@ -1,4 +1,3 @@
-// src/app/users/components/TableToolbar.tsx
 "use client";
 import * as Select from "@radix-ui/react-select";
 
@@ -50,7 +49,6 @@ export default function TableToolbar(props: Props) {
   >
     <Select.ItemText>Romaguera-Crona</Select.ItemText>
   </Select.Item>
-  {/* Repeat for other companies */}
 </Select.Content>
       </Select.Root>
 
