@@ -1,0 +1,63 @@
+// src/app/users/page.tsx
+"use client";
+import { useState, useEffect } from "react";
+import { useUsersQuery } from "./hooks/useUsersQuery";
+import UsersTable from "./components/usersTable";
+import TableToolbar from "./components/tableToolbar";
+import AddEditUserDialog from "./components/addEditUserDialog";
+import { useAuthStore } from "@/store/authStore";
+import { redirect } from "next/navigation";
+export default function UsersPage() {
+  const [search, setSearch] = useState("");
+  const [company, setCompany] = useState<string | undefined>();
+  const [sort, setSort] = useState<"email-asc" | "email-desc" | undefined>("email-asc");
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+
+  const { data, isLoading } = useUsersQuery({ page, pageSize, search, company, sort });
+
+  // Hardcode logged-in user from first page rows (once)
+  const { user, setUser } = useAuthStore();
+  useEffect(() => {
+    if (!user && data?.rows?.[0]) setUser(data.rows[0]);
+  }, [data, user, setUser]);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <TableToolbar
+          search={search}
+          onSearchChange={setSearch}
+          company={company}
+          onCompanyChange={setCompany}
+          sort={sort}
+          onSortChange={setSort}
+        />
+        <AddEditUserDialog />
+      </div>
+
+      <UsersTable rows={data?.rows ?? []} isLoading={isLoading} />
+
+      <div className="flex items-center justify-end gap-2">
+         <button
+    className="px-5 py-2 rounded-md font-medium bg-gradient-to-r from-indigo-500 to-blue-600 text-white 
+               shadow-md hover:shadow-lg transition-all duration-300 ease-in-out 
+               hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+    disabled={page === 1}
+    onClick={() => setPage((p) => Math.max(p - 1, 1))}
+  >
+    ◀ Prev
+  </button>
+  <button
+    className="px-5 py-2 rounded-md font-medium bg-gradient-to-r from-pink-500 to-red-600 text-white 
+               shadow-md hover:shadow-lg transition-all duration-300 ease-in-out 
+               hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+    disabled={(data?.rows?.length ?? 0) < pageSize || (data?.total ?? 0) <= page * pageSize}
+    onClick={() => setPage((p) => p + 1)}
+  >
+    Next ▶
+  </button>
+      </div>
+    </div>
+  );
+}
