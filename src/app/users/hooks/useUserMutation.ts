@@ -15,7 +15,7 @@ export function useUserMutations() {
       await qc.cancelQueries({ queryKey: ["users"] });
       const snapshots = qc
         .getQueryCache()
-        .findAll(["users"])
+        .findAll({ queryKey: ["users"] })
         .map((q) => ({
           key: q.queryKey,
           prev: qc.getQueryData(q.queryKey) as { rows: User[]; total: number },
@@ -57,7 +57,7 @@ export function useUserMutations() {
       await qc.cancelQueries({ queryKey: ["users"] });
       const snapshots = qc
         .getQueryCache()
-        .findAll(["users"])
+      .findAll({ queryKey: ["users"] })
         .map((q) => ({
           key: q.queryKey,
           prev: qc.getQueryData(q.queryKey) as { rows: User[]; total: number },
@@ -86,7 +86,7 @@ export function useUserMutations() {
       await qc.cancelQueries({ queryKey: ["users"] });
       const snapshots = qc
         .getQueryCache()
-        .findAll(["users"])
+      .findAll({ queryKey: ["users"] })
         .map((q) => ({
           key: q.queryKey,
           prev: qc.getQueryData(q.queryKey) as { rows: User[]; total: number },
