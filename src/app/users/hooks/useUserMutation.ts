@@ -23,7 +23,7 @@ export function useUserMutations() {
       snapshots.forEach(({ key, prev }) => {
         if (!prev) return;
         qc.setQueryData(key, {
-          rows: [{ id: Math.random(), ...newUser } as User, ...prev.rows],
+          rows: [{ id:crypto.randomUUID(), ...newUser } as User, ...prev.rows],
           total: prev.total + 1,
         });
       });
@@ -34,18 +34,15 @@ export function useUserMutations() {
         if (prev) qc.setQueryData(key, prev);
       });
     },
-    onSuccess: (created, _newUser, ctx) => {
-      ctx?.snapshots?.forEach(({ key, prev }) => {
-        if (!prev) return;
-        qc.setQueryData(key, (curr?: { rows: User[]; total: number }) => {
-          if (!curr) return prev;
-          return {
-            rows: [created, ...curr.rows.filter((r) => r.id !== created.id)],
-            total: curr.total,
-          };
-        });
-      });
-    },
+onSuccess: (savedUser) => {
+  qc.setQueryData(["users"], (prev: { rows: User[]; total: number } | undefined) => {
+    if (!prev) return { rows: [savedUser], total: 1 };
+    return {
+      rows: [savedUser, ...prev.rows],
+      total: prev.total + 1,
+    };
+  });
+}
   });
 
   const editUser = useMutation({
@@ -78,7 +75,7 @@ export function useUserMutations() {
   });
 
   const deleteUser = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string) => {
       await api.delete(`/users/${id}`);
       return id;
     },
@@ -94,7 +91,7 @@ export function useUserMutations() {
       snapshots.forEach(({ key, prev }) => {
         if (!prev) return;
         qc.setQueryData(key, {
-          rows: prev.rows.filter((r) => r.id !== id),
+          rows: prev.rows.filter((r) => r.id !== String(id)),
           total: Math.max(prev.total - 1, 0),
         });
       });

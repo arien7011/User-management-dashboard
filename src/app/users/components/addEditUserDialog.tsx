@@ -29,6 +29,11 @@ const initialForm = useMemo(() => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+  if (form.phone.length < 6 || form.phone.length > 22) {
+    alert("Phone number must be between 6 and 22 digits.");
+    return;
+  }
     const payload = {
       name: form.name,
       email: form.email,
@@ -42,8 +47,13 @@ const initialForm = useMemo(() => {
     } else {
       await addUser.mutateAsync(payload);
     }
+    resetForm();
     setOpen(false);
   };
+
+  const resetForm = () => {
+    setForm({ name: "", email: "", phone: "", company: "" });
+  }
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -81,6 +91,8 @@ const initialForm = useMemo(() => {
                 value={form.phone}
                 onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                 className="border rounded w-full px-2 py-1"
+                minLength={6}
+                maxLength={15}
                 required
               />
             </div>
@@ -95,7 +107,7 @@ const initialForm = useMemo(() => {
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Dialog.Close className="px-3 py-1 border rounded">Cancel</Dialog.Close>
+              <Dialog.Close className="px-3 py-1 border rounded" onClick={resetForm} >Cancel</Dialog.Close>
               <button type="submit" className="px-3 py-1 border rounded bg-blue-600 text-white">
                 Save
               </button>
