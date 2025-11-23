@@ -47,12 +47,12 @@ const initialForm = useMemo(() => {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger className="px-3 py-1" asChild>
+      <Dialog.Trigger className="px-3 py-2" asChild>
        <Button variant="primary">{isEdit ? "Edit" : "Add User"}</Button> 
       </Dialog.Trigger>
       <Dialog.Content className="fixed inset-0 flex items-center justify-center">
         <div className="bg-white dark:bg-neutral-900 border rounded p-4 w-[400px] shadow">
-          <Dialog.Title className="font-semibold mb-2">
+          <Dialog.Title className="font-semibold mb-2 py-[10px]">
             {isEdit ? "Edit user" : "Add user"}
           </Dialog.Title>
           <form className="space-y-3" onSubmit={onSubmit}>

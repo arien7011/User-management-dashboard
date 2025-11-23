@@ -7,7 +7,7 @@ export default function DarkModeSwitch() {
 
     return (
         <div className="flex items-center">
-            <span className="text-xs">Dark</span>
+            <span className="text-sm pr-2">{dark ? "Dark" : "Light"}</span>
             <Switch.Root
             checked={dark}
             onCheckedChange={toggle}

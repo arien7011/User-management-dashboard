@@ -6,6 +6,7 @@ import UsersTable from "./components/usersTable";
 import TableToolbar from "./components/tableToolbar";
 import AddEditUserDialog from "./components/addEditUserDialog";
 import { useAuthStore } from "@/store/authStore";
+import { FaCaretRight ,FaCaretLeft } from "react-icons/fa6";
 export default function UsersPage() {
   const [search, setSearch] = useState("");
   const [company, setCompany] = useState<string | undefined>();
@@ -46,22 +47,22 @@ const { data: base } = useUsersQuery({
 
       <div className="flex items-center justify-end gap-2">
          <button
-    className="px-5 py-2 rounded-md font-medium bg-gradient-to-r from-indigo-500 to-blue-600 text-white 
+    className="px-5 flex items-center py-2 rounded-md font-medium bg-gradient-to-r from-indigo-500 to-blue-600 text-white 
                shadow-md hover:shadow-lg transition-all duration-300 ease-in-out 
                hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
     disabled={page === 1}
     onClick={() => setPage((p) => Math.max(p - 1, 1))}
   >
-    ◀ Prev
+   <FaCaretLeft className="text-white dark:text-white w-4 h-[1.4rem]" />Prev
   </button>
   <button
-    className="px-5 py-2 rounded-md font-medium bg-gradient-to-r from-pink-500 to-red-600 text-white 
+    className="px-5 flex items-center  py-2 rounded-md font-medium bg-gradient-to-r from-pink-500 to-red-600 text-white 
                shadow-md hover:shadow-lg transition-all duration-300 ease-in-out 
                hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
     disabled={(data?.rows?.length ?? 0) < pageSize || (data?.total ?? 0) <= page * pageSize}
     onClick={() => setPage((p) => p + 1)}
   >
-    Next ▶
+    Next  <FaCaretRight className="text-white dark:text-white w-4 h-[1.4rem]" />
   </button>
       </div>
     </div>

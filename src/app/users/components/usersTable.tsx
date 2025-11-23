@@ -8,7 +8,7 @@ import initials from "@/utils/initials";
 export default function UsersTable({ rows, isLoading }: { rows: User[]; isLoading: boolean }) {
   if (isLoading) return <div>Loading…</div>;
   return (
-    <div className="overflow-auto rounded border">
+    <div className="overflow-auto rounded border border-gray-500">
       <table className="min-w-full text-sm">
         <thead className="bg-neutral-100 dark:bg-neutral-800">
           <tr>
