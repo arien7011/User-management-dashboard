@@ -1,4 +1,3 @@
-// src/app/users/hooks/useUsersQuery.ts
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import type { User } from "@/types/user";
@@ -23,7 +22,7 @@ export function useUsersQuery(params: Params) {
         rows = rows.filter((u) => u.name.toLowerCase().includes(q));
       }
       if (params.company) {
-        rows = rows.filter((u) => u.company?.name === params.company);
+       rows = params.company !== "all" ? rows.filter((u) => u.company?.name === params.company) : rows;
       }
       if (params.sort === "email-asc") {
         rows = rows.slice().sort((a, b) => a.email.localeCompare(b.email));

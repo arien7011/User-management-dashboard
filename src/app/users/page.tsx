@@ -6,7 +6,6 @@ import UsersTable from "./components/usersTable";
 import TableToolbar from "./components/tableToolbar";
 import AddEditUserDialog from "./components/addEditUserDialog";
 import { useAuthStore } from "@/store/authStore";
-import { redirect } from "next/navigation";
 export default function UsersPage() {
   const [search, setSearch] = useState("");
   const [company, setCompany] = useState<string | undefined>();
@@ -15,8 +14,14 @@ export default function UsersPage() {
   const pageSize = 5;
 
   const { data, isLoading } = useUsersQuery({ page, pageSize, search, company, sort });
-
-  // Hardcode logged-in user from first page rows (once)
+const { data: base } = useUsersQuery({
+  page: 1,
+  pageSize: 1000, // or any large number to get all users
+  search: "",
+  company: undefined,
+  sort: undefined,
+});
+ 
   const { user, setUser } = useAuthStore();
   useEffect(() => {
     if (!user && data?.rows?.[0]) setUser(data.rows[0]);
@@ -32,6 +37,7 @@ export default function UsersPage() {
           onCompanyChange={setCompany}
           sort={sort}
           onSortChange={setSort}
+          users={base?.rows ?? []}
         />
         <AddEditUserDialog />
       </div>

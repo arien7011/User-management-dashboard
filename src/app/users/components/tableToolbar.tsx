@@ -1,7 +1,9 @@
 "use client";
 import * as Select from "@radix-ui/react-select";
-
+import { getCompanyOptions } from "../utils/mapCompanyOptions";
+import { User } from "@/types/user";
 type Props = {
+  users: User[];
   search: string;
   onSearchChange: (v: string) => void;
   company?: string;
@@ -12,8 +14,8 @@ type Props = {
 
 export default function TableToolbar(props: Props) {
   type SortValue = "email-asc" | "email-desc" | "";
-
-  const { search, onSearchChange, company, onCompanyChange, sort, onSortChange } = props;
+  const { search, onSearchChange, company, onCompanyChange, sort, onSortChange,users } = props;
+  const companyOptions = getCompanyOptions(users ?? []);
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -41,14 +43,13 @@ export default function TableToolbar(props: Props) {
     value="all"
     className="px-3 py-2 rounded-md cursor-pointer hover:bg-indigo-100 dark:hover:bg-neutral-700 transition"
   >
-    <Select.ItemText>All companies</Select.ItemText>
+    <Select.ItemText className="px-3 py-2 dark:text-neutral-100 rounded-md cursor-pointer hover:bg-indigo-100  transition">All companies</Select.ItemText>
   </Select.Item>
-  <Select.Item
-    value="Romaguera-Crona"
-    className="px-3 py-2 rounded-md cursor-pointer hover:bg-indigo-100 dark:hover:bg-neutral-700 transition"
-  >
-    <Select.ItemText>Romaguera-Crona</Select.ItemText>
+  {companyOptions.map((name) => (
+  <Select.Item key={name} value={name}  className="px-3 py-2 rounded-md cursor-pointer hover:bg-indigo-100 dark:hover:bg-neutral-700 transition">
+    <Select.ItemText>{name}</Select.ItemText>
   </Select.Item>
+))}
 </Select.Content>
       </Select.Root>
 
@@ -61,8 +62,8 @@ export default function TableToolbar(props: Props) {
         <Select.Content  position="popper"
   sideOffset={6}
   className="z-50 bg-white dark:bg-neutral-800 border rounded-md shadow-lg p-1">
-          <Select.Item value="email-asc">
-            <Select.ItemText  className="px-3 py-2 rounded-md cursor-pointer hover:bg-indigo-100 dark:hover:bg-neutral-700 transition">Email A–Z</Select.ItemText>
+          <Select.Item value="email-asc" className="px-3 py-2 rounded-md cursor-pointer hover:bg-indigo-100 dark:hover:bg-neutral-700 transition">
+            <Select.ItemText  >Email A–Z</Select.ItemText>
           </Select.Item>
           <Select.Item value="email-desc"  className="px-3 py-2 rounded-md cursor-pointer hover:bg-indigo-100 dark:hover:bg-neutral-700 transition">
             <Select.ItemText>Email Z–A</Select.ItemText>

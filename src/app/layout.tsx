@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "../providers/provider";
 import { Inter } from "next/font/google";
+import Navbar from "@/components/navbar/navbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,10 +33,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <body
-        className={` px-2 py-2 ${geistSans.variable} ${geistMono.variable} antialiased font-sans min-h-screen bg-gradient-to-br from-indigo-200 via-white to-pink-200 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-800 bg-fixed bg-cover`}
+        className={` px-2 py-2 ${geistSans.variable} ${geistMono.variable} antialiased font-sans min-h-screen bg-gradient-to-br from-indigo-200 via-white to-pink-200 dark:text-neutral-100 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-800 bg-fixed bg-cover`}
       >
        <Providers>
-          {children}
+       <Navbar />
+          <main className="p-4">{children}</main>
         </Providers>
       </body>
     </html>
