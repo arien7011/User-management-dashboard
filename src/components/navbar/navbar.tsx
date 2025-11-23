@@ -1,20 +1,20 @@
-"use client";
-import { useThemeStore } from "@/store/themeStore";
-import {useAuthStore}  from "@/store/authStore";
-import DarkModeSwitch from "./darkModeSwitch";
-import initials from "@/utils/initials";
-import { useEffect } from "react";
+'use client';
+import { useThemeStore } from '@/store/themeStore';
+import { useAuthStore } from '@/store/authStore';
+import DarkModeSwitch from './darkModeSwitch';
+import initials from '@/utils/initials';
+import { useEffect } from 'react';
 
 export default function Navbar() {
-    const {user} = useAuthStore();
-    const dark = useThemeStore((s) => s.dark);
+  const { user } = useAuthStore();
+  const dark = useThemeStore((s) => s.dark);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      document.documentElement.classList.toggle("dark", dark);
+    if (typeof window !== 'undefined') {
+      document.documentElement.classList.toggle('dark', dark);
     }
   }, [dark]);
-     return (
+  return (
     <nav className="border-b border-neutral-200 dark:border-neutral-800 px-4 py-3 flex items-center justify-between">
       <div className="font-semibold">User Dashboard</div>
       <div className="flex items-center gap-4">

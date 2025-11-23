@@ -1,21 +1,21 @@
 // src/app/users/hooks/useUserMutations.ts
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
-import type { User } from "@/types/user";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/lib/axios';
+import type { User } from '@/types/user';
 
 export function useUserMutations() {
   const qc = useQueryClient();
 
   const addUser = useMutation({
-    mutationFn: async (payload: Omit<User, "id">) => {
-      const { data } = await api.post<User>("/users", payload);
+    mutationFn: async (payload: Omit<User, 'id'>) => {
+      const { data } = await api.post<User>('/users', payload);
       return { ...payload, id: data?.id ?? Math.floor(Math.random() * 10_000) };
     },
     onMutate: async (newUser) => {
-      await qc.cancelQueries({ queryKey: ["users"] });
+      await qc.cancelQueries({ queryKey: ['users'] });
       const snapshots = qc
         .getQueryCache()
-        .findAll({ queryKey: ["users"] })
+        .findAll({ queryKey: ['users'] })
         .map((q) => ({
           key: q.queryKey,
           prev: qc.getQueryData(q.queryKey) as { rows: User[]; total: number },
@@ -23,7 +23,7 @@ export function useUserMutations() {
       snapshots.forEach(({ key, prev }) => {
         if (!prev) return;
         qc.setQueryData(key, {
-          rows: [{ id:crypto.randomUUID(), ...newUser } as User, ...prev.rows],
+          rows: [{ id: crypto.randomUUID(), ...newUser } as User, ...prev.rows],
           total: prev.total + 1,
         });
       });
@@ -34,15 +34,18 @@ export function useUserMutations() {
         if (prev) qc.setQueryData(key, prev);
       });
     },
-onSuccess: (savedUser) => {
-  qc.setQueryData(["users"], (prev: { rows: User[]; total: number } | undefined) => {
-    if (!prev) return { rows: [savedUser], total: 1 };
-    return {
-      rows: [savedUser, ...prev.rows],
-      total: prev.total + 1,
-    };
-  });
-}
+    onSuccess: (savedUser) => {
+      qc.setQueryData(
+        ['users'],
+        (prev: { rows: User[]; total: number } | undefined) => {
+          if (!prev) return { rows: [savedUser], total: 1 };
+          return {
+            rows: [savedUser, ...prev.rows],
+            total: prev.total + 1,
+          };
+        }
+      );
+    },
   });
 
   const editUser = useMutation({
@@ -51,10 +54,10 @@ onSuccess: (savedUser) => {
       return user;
     },
     onMutate: async (updated) => {
-      await qc.cancelQueries({ queryKey: ["users"] });
+      await qc.cancelQueries({ queryKey: ['users'] });
       const snapshots = qc
         .getQueryCache()
-      .findAll({ queryKey: ["users"] })
+        .findAll({ queryKey: ['users'] })
         .map((q) => ({
           key: q.queryKey,
           prev: qc.getQueryData(q.queryKey) as { rows: User[]; total: number },
@@ -66,11 +69,13 @@ onSuccess: (savedUser) => {
           total: prev.total,
         });
       });
-      qc.setQueryData(["user", updated.id], updated);
+      qc.setQueryData(['user', updated.id], updated);
       return { snapshots };
     },
     onError: (_err, _updated, ctx) => {
-      ctx?.snapshots?.forEach(({ key, prev }) => prev && qc.setQueryData(key, prev));
+      ctx?.snapshots?.forEach(
+        ({ key, prev }) => prev && qc.setQueryData(key, prev)
+      );
     },
   });
 
@@ -80,10 +85,10 @@ onSuccess: (savedUser) => {
       return id;
     },
     onMutate: async (id) => {
-      await qc.cancelQueries({ queryKey: ["users"] });
+      await qc.cancelQueries({ queryKey: ['users'] });
       const snapshots = qc
         .getQueryCache()
-      .findAll({ queryKey: ["users"] })
+        .findAll({ queryKey: ['users'] })
         .map((q) => ({
           key: q.queryKey,
           prev: qc.getQueryData(q.queryKey) as { rows: User[]; total: number },
@@ -95,11 +100,13 @@ onSuccess: (savedUser) => {
           total: Math.max(prev.total - 1, 0),
         });
       });
-      qc.removeQueries({ queryKey: ["user", id], exact: true });
+      qc.removeQueries({ queryKey: ['user', id], exact: true });
       return { snapshots };
     },
     onError: (_err, _id, ctx) => {
-      ctx?.snapshots?.forEach(({ key, prev }) => prev && qc.setQueryData(key, prev));
+      ctx?.snapshots?.forEach(
+        ({ key, prev }) => prev && qc.setQueryData(key, prev)
+      );
     },
   });
 
