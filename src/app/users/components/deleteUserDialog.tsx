@@ -2,7 +2,7 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { useUserMutations } from '../hooks/useUserMutation';
 import Button from '@/components/ui/button';
-export default function DeleteUserDialog({ id }: { id: string }) {
+export default function DeleteUserDialog({ id }: { id: number }) {
   const { deleteUser } = useUserMutations();
   return (
     <AlertDialog.Root>
