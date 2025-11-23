@@ -1,4 +1,3 @@
-// src/app/users/hooks/useUserMutations.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import type { User } from "@/types/user";
@@ -8,7 +7,6 @@ type ListShape = { rows: User[]; total: number };
 export function useUserMutations() {
   const qc = useQueryClient();
 
-  // Helper to update all "users" caches (list variants with different params)
   const updateAllUserLists = (
     updater: (prev: ListShape | undefined) => ListShape | undefined
   ) => {
@@ -21,17 +19,15 @@ export function useUserMutations() {
   };
 
   const addUser = useMutation({
-    // Do NOT send id; let json-server assign it
     mutationFn: async (payload: Omit<User, "id">) => {
       const { data } = await api.post<User>("/users", payload);
-      return data; // must contain server-assigned id
+      return data;
     },
 
-    // Optional optimistic insert with tempId
     onMutate: async (newUser) => {
       await qc.cancelQueries({ queryKey: ["users"] });
 
-      const tempId = Date.now(); // temporary unique id
+      const tempId = Date.now();
       updateAllUserLists((prev) => {
         if (!prev) return prev;
         return {
@@ -44,7 +40,6 @@ export function useUserMutations() {
     },
 
     onError: (_err, _newUser, ctx) => {
-      // Rollback optimistic insert
       if (!ctx) return;
       const { tempId } = ctx as { tempId?: number };
       updateAllUserLists((prev) => {
@@ -57,31 +52,26 @@ export function useUserMutations() {
     },
 
     onSuccess: (savedUser, _newUser, ctx) => {
-      // Replace tempId row with the real server user
       const tempId = (ctx as { tempId?: number })?.tempId;
       updateAllUserLists((prev) => {
         if (!prev) return prev;
         const replaced =
           tempId != null
             ? prev.rows.map((u) => (u.id === tempId ? savedUser : u))
-            : [savedUser, ...prev.rows]; // if no optimistic insert
+            : [savedUser, ...prev.rows]; 
         return {
           rows: replaced,
-          total: prev.total, // total unchanged (we already incremented)
+          total: prev.total,
         };
       });
 
-      // Also set/merge single-user cache
       qc.setQueryData(["user", savedUser.id], savedUser);
-      // No invalidate needed; we just reconciled with server
     },
   });
 
   const editUser = useMutation({
     mutationFn: async (user: User) => {
-      // Ensure numeric id for json-server
       const id = Number(user.id);
-      // PATCH updates only changed fields; PUT can replace entire object
       const { data } = await api.patch<User>(`/users/${id}`, user);
       return data;
     },
@@ -99,11 +89,9 @@ export function useUserMutations() {
       qc.setQueryData(["user", Number(updated.id)], updated);
     },
     onError: (_err, _updated) => {
-      // Optional: invalidate to refetch consistent data
       qc.invalidateQueries({ queryKey: ["users"] });
     },
     onSuccess: (saved) => {
-      // Ensure lists reflect server’s saved version
       updateAllUserLists((prev) => {
         if (!prev) return prev;
         return {
@@ -134,7 +122,6 @@ export function useUserMutations() {
       qc.removeQueries({ queryKey: ["user", Number(id)], exact: true });
     },
     onError: () => {
-      // Optional: refetch to recover if delete failed
       qc.invalidateQueries({ queryKey: ["users"] });
     },
   });
