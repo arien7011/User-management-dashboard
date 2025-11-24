@@ -46,8 +46,9 @@ export default function AddEditUserDialog({ user }: { user?: User }) {
       await editUser.mutateAsync({ ...user, ...payload });
     } else {
       await addUser.mutateAsync(payload);
+       resetForm();
     }
-    resetForm();
+   
     setOpen(false);
   };
 
